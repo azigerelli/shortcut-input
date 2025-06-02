@@ -27,13 +27,26 @@
         flex-direction: column;
         gap: 0.3em; /* Adds spacing between label and input */
       }
+      .inline-group {
+        display: flex;
+        align-items: left;
+        gap: 1em; /* Adds spacing between elements */
+      }
+      .inline-group label {
+        margin-right: 0.5em;
+      }
+      .inline-checkbox {
+        display: flex;
+        align-items: left;
+        gap: 0.3em; /* Adds spacing between the checkbox and label text */
+        white-space: nowrap; /* Prevents wrapping of the label text */
+      }
       label {
         font-weight: 600;
       }
       input,
       select,
       button {
-        width: 100%;
         padding: 0.6em;
         border: 1px solid #ccc;
         border-radius: 8px;
@@ -94,7 +107,7 @@
         <select id="card" required></select>
       </div>
 
-      <div class="form-group">
+      <div class="form-group inline-group">
         <label for="amount">Amount</label>
         <input
           type="number"
@@ -105,6 +118,10 @@
           min="0"
           inputmode="decimal"
         />
+        <label for="exclude" class="inline-checkbox">
+            <input type="checkbox" id="exclude" />
+          Exclude from Budget
+        </label>
       </div>
 
       <button type="submit">Submit</button>
@@ -120,6 +137,7 @@
           category: document.getElementById("category").value,
           card: document.getElementById("card").value,
           amount: document.getElementById("amount").value,
+          exclude: document.getElementById("exclude").checked, // Get the checkbox value
         };
         const encoded = encodeURIComponent(JSON.stringify(data));
         window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
