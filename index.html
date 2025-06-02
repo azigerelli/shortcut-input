@@ -112,6 +112,9 @@
 
     <script>
       function submitForm() {
+        const params = new URLSearchParams(window.location.search);
+        const callbackName = params.get("callbackName") || "HandleBudgetEntry"; // Default to "HandleBudgetEntry" if not provided
+
         const data = {
           description: document.getElementById("description").value,
           category: document.getElementById("category").value,
@@ -119,11 +122,14 @@
           amount: document.getElementById("amount").value,
         };
         const encoded = encodeURIComponent(JSON.stringify(data));
-        window.location.href = `shortcuts://x-callback-url/run-shortcut?name=HandleBudgetEntry&input=${encoded}`;
+        window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
+          callbackName
+        )}&input=${encoded}`;
         setTimeout(() => {
           window.close(); // Attempt to close the web view
         }, 100); // Add a slight delay to ensure the redirect happens first
       }
+
       function getQueryParams() {
         const params = new URLSearchParams(window.location.search);
         return {
