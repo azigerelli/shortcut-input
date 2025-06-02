@@ -86,21 +86,12 @@
         <label for="category">Category</label>
         <select id="category" required>
           <option value="" disabled selected>Choose a category...</option>
-          <option value="Rando">Rando</option>
-          <option value="Gas">Gas</option>
-          <option value="Other">Other</option>
         </select>
       </div>
 
       <div class="form-group">
         <label for="card">Card</label>
-        <select id="card" required>
-          <option value="" disabled selected>Choose a card...</option>
-          <option value="Visa">Visa</option>
-          <option value="MasterCard">MasterCard</option>
-          <option value="Amex">Amex</option>
-          <option value="Discover">Discover</option>
-        </select>
+        <select id="card" required></select>
       </div>
 
       <div class="form-group">
@@ -112,6 +103,7 @@
           required
           step="0.01"
           min="0"
+          inputmode="decimal"
         />
       </div>
 
@@ -127,8 +119,48 @@
           amount: document.getElementById("amount").value,
         };
         const encoded = encodeURIComponent(JSON.stringify(data));
-        window.location.href = `shortcuts://x-callback-url/run-shortcut?name=HandleFormData&input=${encoded}`;
+        window.location.href = `shortcuts://x-callback-url/run-shortcut?name=HandleBudgetEntry&input=${encoded}`;
+        setTimeout(() => {
+          window.close(); // Attempt to close the web view
+        }, 100); // Add a slight delay to ensure the redirect happens first
       }
+      function getQueryParams() {
+        const params = new URLSearchParams(window.location.search);
+        return {
+          categoryOptions: params.get("categories"),
+          cardOptions: params.get("cards"),
+        };
+      }
+
+      function populateDropdowns() {
+        const { categoryOptions, cardOptions } = getQueryParams();
+
+        if (categoryOptions) {
+          const categoryDropdown = document.getElementById("category");
+          categoryDropdown.innerHTML =
+            '<option value="" disabled selected>Choose a category...</option>';
+          categoryOptions.split(",").forEach((option) => {
+            const opt = document.createElement("option");
+            opt.value = option;
+            opt.textContent = option;
+            categoryDropdown.appendChild(opt);
+          });
+        }
+
+        if (cardOptions) {
+          const cardDropdown = document.getElementById("card");
+          cardDropdown.innerHTML =
+            '<option value="" disabled selected>Choose a card...</option>';
+          cardOptions.split(",").forEach((option) => {
+            const opt = document.createElement("option");
+            opt.value = option;
+            opt.textContent = option;
+            cardDropdown.appendChild(opt);
+          });
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", populateDropdowns);
     </script>
   </body>
 </html>
