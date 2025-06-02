@@ -60,6 +60,28 @@
         background-color: #005ecb;
         transform: scale(1.05);
       }
+      #emoji-container {
+        font-size: 3rem;
+        text-align: center;
+        margin-top: 1em;
+        opacity: 0;
+        transform: scale(0);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      #emoji-container.show {
+        opacity: 1;
+        transform: scale(1.5);
+        animation: bounce 1s infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
       @media (max-width: 600px) {
         form {
           padding: 1em;
@@ -110,6 +132,8 @@
       <button type="submit">Submit</button>
     </form>
 
+    <div id="emoji-container">🎉</div>
+
     <script>
       function submitForm() {
         const params = new URLSearchParams(window.location.search);
@@ -122,16 +146,41 @@
           amount: document.getElementById("amount").value,
         };
         const encoded = encodeURIComponent(JSON.stringify(data));
-        window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
-          callbackName
-        )}&input=${encoded}`;
+
+        // Array of emojis to pick from
+        const emojis = [
+          "🎉",
+          "✨",
+          "🫡",
+          "🔥",
+          "💥",
+          "🌟",
+          "🍾",
+          "🎶",
+          "🥳",
+        ];
+
+        // Pick a random emoji
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+        // Show the animated emoji
+        const emojiContainer = document.getElementById("emoji-container");
+        emojiContainer.textContent = randomEmoji; // Set the random emoji
+        emojiContainer.classList.add("show");
+
+        // Redirect after a short delay
         setTimeout(() => {
-          if (window.history.length > 1) {
-            window.history.back(); // Navigate back to the previous page
-          } else {
-            window.close(); // Attempt to close the web view
-          }
-        }, 100);
+          window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
+            callbackName
+          )}&input=${encoded}`;
+          setTimeout(() => {
+            if (window.history.length > 1) {
+              window.history.back(); // Navigate back to the previous page
+            } else {
+              window.close(); // Attempt to close the web view
+            }
+          }, 100);
+        }, 2000); // Delay to allow the animation to play
       }
 
       function getQueryParams() {
