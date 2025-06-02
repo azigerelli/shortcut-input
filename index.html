@@ -126,8 +126,12 @@
           callbackName
         )}&input=${encoded}`;
         setTimeout(() => {
-          window.close(); // Attempt to close the web view
-        }, 100); // Add a slight delay to ensure the redirect happens first
+          if (window.history.length > 1) {
+            window.history.back(); // Navigate back to the previous page
+          } else {
+            window.close(); // Attempt to close the web view
+          }
+        }, 100);
       }
 
       function getQueryParams() {
