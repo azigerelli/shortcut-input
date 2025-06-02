@@ -148,17 +148,7 @@
         const encoded = encodeURIComponent(JSON.stringify(data));
 
         // Array of emojis to pick from
-        const emojis = [
-          "🎉",
-          "✨",
-          "🫡",
-          "🔥",
-          "💥",
-          "🌟",
-          "🍾",
-          "🎶",
-          "🥳",
-        ];
+        const emojis = ["🎉", "✨", "🫡", "🔥", "💥", "🌟", "🍾", "🎶", "🥳"];
 
         // Pick a random emoji
         const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
@@ -168,12 +158,16 @@
         emojiContainer.textContent = randomEmoji; // Set the random emoji
         emojiContainer.classList.add("show");
 
+        setTimeout(() => {
+          emojiContainer.classList.remove("show");
+        }, 1500);
+
         // Redirect after a short delay
         setTimeout(() => {
           window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
             callbackName
           )}&input=${encoded}`;
-        }, 2000); // Delay to allow the animation to play
+        }, 2000);
       }
 
       function getQueryParams() {
