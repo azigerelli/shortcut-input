@@ -173,13 +173,6 @@
           window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
             callbackName
           )}&input=${encoded}`;
-          setTimeout(() => {
-            if (window.history.length > 1) {
-              window.history.back(); // Navigate back to the previous page
-            } else {
-              window.close(); // Attempt to close the web view
-            }
-          }, 100);
         }, 2000); // Delay to allow the animation to play
       }
 
