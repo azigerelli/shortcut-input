@@ -128,6 +128,7 @@
           const reader = new FileReader();
           reader.onload = function (event) {
             receiptData = event.target.result; // Store the Base64-encoded image
+            console.log(receiptData);
             isProcessing = false; // Reset processing flag
             submitButton.disabled = false; // Re-enable the submit button after processing
           };
