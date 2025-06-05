@@ -20,12 +20,12 @@
         padding: 1.5em;
         display: grid;
         grid-template-columns: 1fr;
-        gap: 1em; /* Adds spacing between elements */
+        gap: 1em;
       }
       .form-group {
         display: flex;
         flex-direction: column;
-        gap: 0.3em; /* Adds spacing between label and input */
+        gap: 0.3em;
       }
       label {
         font-weight: 600;
@@ -38,7 +38,7 @@
         border: 1px solid #ccc;
         border-radius: 8px;
         font-size: 1em;
-        box-sizing: border-box; /* Ensures consistent width */
+        box-sizing: border-box;
       }
       input:focus,
       select:focus,
@@ -117,15 +117,18 @@
 
     <script>
       let receiptData = null; // Store the Base64-encoded image globally
+      let isProcessing = false; // Flag to track image processing
       const submitButton = document.getElementById("submit-button");
 
       document.getElementById("receipt").addEventListener("change", function () {
         const file = this.files[0];
         if (file) {
+          isProcessing = true; // Set processing flag
           submitButton.disabled = true; // Disable the submit button while processing
           const reader = new FileReader();
           reader.onload = function (event) {
             receiptData = event.target.result; // Store the Base64-encoded image
+            isProcessing = false; // Reset processing flag
             submitButton.disabled = false; // Re-enable the submit button after processing
           };
           reader.readAsDataURL(file);
@@ -133,6 +136,11 @@
       });
 
       function submitForm() {
+        if (isProcessing) {
+          alert("Please wait until the image is processed.");
+          return;
+        }
+
         const params = new URLSearchParams(window.location.search);
         const callbackName = params.get("callbackName") || "HandleBudgetEntry"; // Default to "HandleBudgetEntry" if not provided
 
