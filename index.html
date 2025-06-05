@@ -56,39 +56,13 @@
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.2s ease;
       }
-      button:hover {
+      button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+      button:hover:not(:disabled) {
         background-color: #005ecb;
         transform: scale(1.05);
-      }
-      #emoji-container {
-        font-size: 3rem;
-        text-align: center;
-        margin-top: 1em;
-        opacity: 0;
-        transform: scale(0);
-        transition: opacity 0.3s ease, transform 0.3s ease;
-      }
-      #emoji-container.show {
-        opacity: 1;
-        transform: scale(1.5);
-        animation: bounce 1s infinite;
-      }
-      @keyframes bounce {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-      @media (max-width: 600px) {
-        form {
-          padding: 1em;
-        }
-        button {
-          font-size: 0.9em;
-        }
       }
     </style>
   </head>
@@ -138,10 +112,26 @@
         />
       </div>
 
-      <button type="submit">Submit</button>
+      <button type="submit" id="submit-button">Submit</button>
     </form>
 
     <script>
+      let receiptData = null; // Store the Base64-encoded image globally
+      const submitButton = document.getElementById("submit-button");
+
+      document.getElementById("receipt").addEventListener("change", function () {
+        const file = this.files[0];
+        if (file) {
+          submitButton.disabled = true; // Disable the submit button while processing
+          const reader = new FileReader();
+          reader.onload = function (event) {
+            receiptData = event.target.result; // Store the Base64-encoded image
+            submitButton.disabled = false; // Re-enable the submit button after processing
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+
       function submitForm() {
         const params = new URLSearchParams(window.location.search);
         const callbackName = params.get("callbackName") || "HandleBudgetEntry"; // Default to "HandleBudgetEntry" if not provided
@@ -151,27 +141,13 @@
           category: document.getElementById("category").value,
           card: document.getElementById("card").value,
           amount: document.getElementById("amount").value,
+          receipt: receiptData, // Use the preprocessed image data
         };
 
-        const receiptInput = document.getElementById("receipt");
-        if (receiptInput.files.length > 0) {
-          const file = receiptInput.files[0];
-          const reader = new FileReader();
-          reader.onload = function (event) {
-            data.receipt = event.target.result; // Base64-encoded image
-            const encoded = encodeURIComponent(JSON.stringify(data));
-            window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
-              callbackName
-            )}&input=${encoded}`;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          data.receipt = null; // Default value if no file is selected
-          const encoded = encodeURIComponent(JSON.stringify(data));
-          window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
-            callbackName
-          )}&input=${encoded}`;
-        }
+        const encoded = encodeURIComponent(JSON.stringify(data));
+        window.location.href = `shortcuts://x-callback-url/run-shortcut?name=${encodeURIComponent(
+          callbackName
+        )}&input=${encoded}`;
       }
 
       function getQueryParams() {
